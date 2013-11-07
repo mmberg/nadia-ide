@@ -1,0 +1,15 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="computer">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="it-IT">Definizione di un computer</xsd:documentation>
+      <xsd:documentation xml:lang="en-US">Definition of a computer</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="keyboard" />
+        <xsd:element name="mouse" />
+        <xsd:element name="monitor" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

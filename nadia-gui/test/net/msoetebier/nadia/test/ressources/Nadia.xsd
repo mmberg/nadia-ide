@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio 2012 Developer Edition (Trial) 10.1.9.4348 (http://www.liquid-technologies.com)-->
+<xsd:schema xmlns:n="http://mmberg.net/nadia" targetNamespace="http://mmberg.net/nadia" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:complexType name="taskSelector" abstract="true" />
+    <xsd:complexType name="javaAction">
+        <xsd:complexContent>
+            <xsd:extension base="n:action">
+                <xsd:sequence>
+                    <xsd:element name="className" type="xsd:string" minOccurs="0" />
+                    <xsd:element name="path" type="xsd:string" minOccurs="0" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="task">
+        <xsd:sequence>
+            <xsd:element name="domain" type="xsd:string" minOccurs="0" />
+            <xsd:element name="act" type="n:dialogAct" minOccurs="0" />
+            <xsd:element ref="n:bagOfWordsTaskSelector" />
+            <xsd:element name="itos" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ito" type="n:ito" maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:choice minOccurs="0" maxOccurs="1">
+                <xsd:element ref="n:javaAction" />
+                <xsd:element ref="n:groovyAction" />
+            </xsd:choice>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" />
+    </xsd:complexType>
+    <xsd:complexType name="ito">
+        <xsd:sequence>
+            <xsd:element name="AQD" type="n:aqd" minOccurs="0" />
+            <xsd:element name="fallback_question" type="xsd:string" minOccurs="0" />
+            <xsd:element name="group" type="xsd:int" />
+            <xsd:element name="index" type="xsd:int" />
+            <xsd:element name="required" type="xsd:boolean" />
+            <xsd:element name="useLG" type="xsd:boolean" />
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" />
+    </xsd:complexType>
+    <xsd:complexType name="bagOfWordsTaskSelector">
+        <xsd:complexContent>
+            <xsd:extension base="n:taskSelector">
+                <xsd:sequence>
+                    <xsd:element name="word" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="aqdContext">
+        <xsd:sequence>
+            <xsd:element name="reference" type="xsd:string" minOccurs="0" />
+            <xsd:element name="specification" type="xsd:string" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="groovyAction">
+        <xsd:complexContent>
+            <xsd:extension base="n:action">
+                <xsd:sequence>
+                    <xsd:element name="code" type="xsd:string" minOccurs="0" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="dialogAct" />
+    <xsd:complexType name="aqdForm">
+        <xsd:sequence>
+            <xsd:element name="formality" type="xsd:int" minOccurs="0" />
+            <xsd:element name="politeness" type="xsd:int" minOccurs="0" />
+            <xsd:element name="temporalOpener" type="xsd:boolean" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="aqd">
+        <xsd:sequence>
+            <xsd:element name="context" type="n:aqdContext" minOccurs="0" />
+            <xsd:element name="form" type="n:aqdForm" minOccurs="0" />
+            <xsd:element name="type" type="n:aqdType" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="action" abstract="true">
+        <xsd:sequence>
+            <xsd:element name="returnAnswer" type="xsd:boolean" />
+            <xsd:element name="utteranceTemplate" type="xsd:string" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="aqdType">
+        <xsd:sequence>
+            <xsd:element name="answerType" type="xsd:string" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="dialog">
+        <xsd:sequence>
+            <xsd:element name="global_formality" type="xsd:int" />
+            <xsd:element name="global_language" type="xsd:string" minOccurs="0" />
+            <xsd:element name="global_politeness" type="xsd:int" />
+            <xsd:element name="start_task_name" type="xsd:string" minOccurs="0" />
+            <xsd:element name="strategy" type="xsd:string" minOccurs="0" />
+            <xsd:element name="tasks" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="task" type="n:task" minOccurs="0" maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:element name="groovyAction" type="n:groovyAction" />
+    <xsd:element name="javaAction" type="n:javaAction" />
+    <xsd:element name="bagOfWordsTaskSelector" type="n:bagOfWordsTaskSelector" />
+    <xsd:element name="dialog" type="n:dialog" />
+</xsd:schema>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language name="english">
+	<fileDialog>
+		<title>Choose a XML Schema (XSD) file, a XML file and optional a restriction file and URL path</title>
+		<message>If you want to create a new XML file, you need to put the full path with the new XML file in it.</message>
+		<schemaPath>Schema file path:</schemaPath>
+		<xmlPath>XML file path:</xmlPath>
+		<restrictionPath>Restriction file path:</restrictionPath>
+		<nadiaUrlPath>URL path of NADIA:</nadiaUrlPath>
+		<errorMessage>Your input is incorrect. Please verify it.</errorMessage>
+	</fileDialog>
+	<versionsDialog>
+		<title>Version out of date</title>
+		<message>Would you like to overwrite the xml file?
+		If not, please fill out the complete path of the new xml file.</message>
+		<path>New XML file path:</path>
+		<errorMessage>Your input is incorrect. Please verify it.</errorMessage>
+	</versionsDialog>
+	<aboutAction>
+		<title>About NADIA</title>
+		<message>NADIA stands for Natural Dialogue System and is a set of components 
+		that deals with the creation of spoken dialogue systems. 
+		
+		While Maren Soetebier created this user interface, 
+		Markus M. Berg designed NADIA.
+		
+		You can learn more about NADIA at: 
+		http://mmberg.net/nadia
+	    </message>
+	</aboutAction>
+	<saveFileAction>
+		<title>How to save this XML file</title>
+		<message>If you add or delete an element,
+		this XML File will be automatically saved.
+		If you change the name of an element, it will be also saved.
+		
+		For more information ask the developer MarenS (Maren Soetebier) at Github.
+		</message>
+	</saveFileAction>
+	<rightClick>
+		<new>New</new>
+		<delete>Delete</delete>
+	</rightClick>
+</language>

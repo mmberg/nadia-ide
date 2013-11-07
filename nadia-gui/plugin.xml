@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+
+<plugin>
+
+   <extension
+         id="guiapp.entrypoints"
+         point="org.eclipse.rap.ui.entrypoint">
+      <entrypoint
+            path="/gui"
+            applicationId="nadia-gui.guiapp"
+            id="guiapp.entrypoint">
+      </entrypoint>
+   </extension>
+   <extension
+         id="nadia-gui.guiapp"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            thread="main"
+            cardinality="singleton-global"
+            visible="true">
+         <run
+               class="net.msoetebier.nadia.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RAP Perspective"
+            class="net.msoetebier.nadia.Perspective"
+            id="nadia-gui.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Navigation"
+            class="net.msoetebier.nadia.view.NavigationView"
+            id="nadia-gui.navigationView">
+      </view>
+      <view
+            allowMultiple="false"
+            name="Aufbau"
+            icon="icons/sample2.gif"
+            class="net.msoetebier.nadia.view.View"
+            id="nadia-gui.view">
+      </view>
+      <view
+      		name="Detail"
+      		class="net.msoetebier.nadia.view.DetailView"
+      		id="nadia-gui.detailView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="GUI"
+            id="nadiagui.category">
+      </category>
+      <command
+            name="Open GUI"
+            description="Opens a gui"
+            categoryId="nadiagui.category"
+            id="nadia-gui.open">
+      </command>
+      <command
+            name="Open Message Dialog"
+            description="Opens a message dialog"
+            categoryId="nadiagui.category"
+            id="nadia-gui.openMessage">
+      </command>
+   </extension>
+
+</plugin>
