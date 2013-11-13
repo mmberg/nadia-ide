@@ -97,6 +97,13 @@ public class LoadNadiaAction extends Action{
 			
 			UrlLauncher launcher = RWT.getClient().getService(UrlLauncher.class);
 			launcher.openURL(url);
+			//INFORMATION IF NO TAB WILL BE OPEN://
+			//By default, servlet engines use cookies to identify a session. 
+			//Browsers usually re-use the same session cookie for all tabs and windows within the same process. 
+			//In the end, the RAP servlet cannot distinguish request that come from the same browser/client-session
+			//and rejects request that come from a second tab or window with the message 
+			//"Multiple browser-instances or browser-tabs per session are not supported. 
+			//You may click OK for restarting the session."
 			} catch (Exception exception) {
 				new ExceptionHandler(exception.getMessage());
 			}
