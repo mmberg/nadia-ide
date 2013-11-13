@@ -41,6 +41,7 @@ public class NavigationView extends ViewPart {
 		viewer.setContentProvider(new TableContentProvider());
 		viewer.setLabelProvider(new TableLabelProvider());
 		setViewerInput(null);
+		
 		chooseLanguage();
 		chooseFileDialog();
 	}
