@@ -24,6 +24,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setInitialSize(new Point(700, 500));
 		configurer.setShowCoolBar(false);
 		configurer.setShowStatusLine(false);
-//		configurer.setTitle("NADIA GUI");
+		configurer.setTitle("NADIA GUI");
 	}
 }

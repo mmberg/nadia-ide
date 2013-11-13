@@ -28,10 +28,9 @@ public class TestMapForItem extends AbstractConverter {
 	
 	@Test
 	public void testMapForStartTaskName() throws Exception {
-		Map<Object, String> getMapForStartTaskName = parserForDetails.getMapForItem("start_task_name", true, getNadiaPath());
+		Map<Object, String> getMapForStartTaskName = parserForDetails.getMapForItem("start_task_name", false, getNadiaPath());
 		assertEquals("start_task_name", getMapForStartTaskName.get("name"));
-		assertEquals("start_task_name", getMapForStartTaskName.get("type"));
-		assertEquals("false", getMapForStartTaskName.get("required"));
+		assertEquals("string", getMapForStartTaskName.get("type"));
 	}
 	
 	@Test

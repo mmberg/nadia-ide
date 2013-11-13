@@ -4,7 +4,7 @@
       <xsd:documentation xml:lang="it-IT">Definizione di un computer</xsd:documentation>
       <xsd:documentation xml:lang="en-US">Definition of a computer</xsd:documentation>
     </xsd:annotation>
-    <xsd:complexType>
+    <xsd:complexType name="computer2">
       <xsd:sequence>
         <xsd:element name="keyboard" />
         <xsd:element name="mouse" />

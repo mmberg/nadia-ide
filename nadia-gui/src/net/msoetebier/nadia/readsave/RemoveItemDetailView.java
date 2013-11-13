@@ -15,21 +15,28 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 public class RemoveItemDetailView {
+	private int countItem;
 
-	 public void removeItemFromXmlFile(int countElements, int countItem, String item) {
+	 public void removeItemFromXmlFile(int countElements, int countItem, String parentItem, String item) {
 		 	NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
 			File xmlFile = new File(navigationView.getXmlPath());	 
 			SAXBuilder builder = new SAXBuilder();
 			try {
 				Document document = (Document) builder.build(xmlFile);
 				Element rootNode = document.getRootElement();
-				if (rootNode.getName().equals(item)) {
-					if (countItem == 1) {
-						rootNode.detach();						
+				if (rootNode.getName().equals(changeItem(parentItem))) {
+					List<Element> children = rootNode.getChildren();
+					for (Element child : children) {
+						if (child.getName().equals(item)) {
+							if (countItem == 0) {
+								rootNode.detach();						
+							}
+							countItem = countItem - 1;							
+						}
 					}
-					countItem = countItem - 1;
 				} else {
-					findAndRemoveItem(countItem, rootNode, item);
+					setCountItem(countItem);
+					findAndRemoveItem(rootNode, parentItem, item);
 				}
 				XMLOutputter xmlOutput = new XMLOutputter();
 				xmlOutput.setFormat(Format.getPrettyFormat());
@@ -40,18 +47,48 @@ public class RemoveItemDetailView {
 			}
 	 }
 	 
-	 private void findAndRemoveItem(int countItem, Element children, String item) {
+	 private void findAndRemoveItem(Element children, String parentItem, String item) {
 			List<Element> list = children.getChildren();
 			for (Element element : list) {
-				if (element.getName().equals(item)) {
-					if (countItem == 1) {
-						element.detach();
-						break;
+				if (element.getName().equals(changeItem(parentItem))) {
+					if (element.getAttributeValue("name").equals(attributeValue(parentItem))) {
+						List<Element> childrenElements = element.getChildren();
+						for (Element childrenElement : childrenElements) {
+							if (childrenElement.getName().equals(item)) {
+								if (getCountItem() == 0) {
+									childrenElement.detach();
+									setCountItem(getCountItem() - 1);
+									break;
+								}
+								setCountItem(getCountItem() - 1);								
+							}
+						}
 					}
-					countItem = countItem - 1;
 				} else {
-					findAndRemoveItem(countItem,element, item);
+					findAndRemoveItem(element, parentItem, item);
 				}
 			}
+	 }
+	 
+	 private String changeItem(String item) {
+			String[] changeItem = item.split("=");
+			return changeItem[0];
+	}
+		
+	private String attributeValue(String item) {
+		if (item.contains("=")) {
+			String[] changeItem = item.split("=");
+			return changeItem[1];	
+		} else {
+			return "";
+		}
+	}
+	 
+	 private void setCountItem(int counter) {
+		 countItem = counter;
+	 }
+	 
+	 private int getCountItem() {
+		 return countItem;
 	 }
 }

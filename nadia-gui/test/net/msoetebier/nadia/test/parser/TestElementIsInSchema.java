@@ -13,7 +13,7 @@ public class TestElementIsInSchema extends AbstractConverter{
 
 	@Test
 	public void testAreElementsInOtherFile() throws Exception {
-		Element computerElement = new Element("computer");
+		Element computerElement = new Element("computer2");
 		boolean isComputerIsInSchema = parser.elementIsInSchema(computerElement , getOtherPath1(), true);
 		boolean computerIsInSchema = true;
 		assertEquals(computerIsInSchema, isComputerIsInSchema);

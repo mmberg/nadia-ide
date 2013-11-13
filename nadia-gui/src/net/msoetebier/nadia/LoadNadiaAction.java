@@ -11,8 +11,11 @@ import javax.net.ssl.X509TrustManager;
 import net.msoetebier.nadia.view.NavigationView;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.rap.rwt.RWT;
+import org.eclipse.rap.rwt.client.service.UrlLauncher;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.*;
@@ -86,8 +89,14 @@ public class LoadNadiaAction extends Action{
 			httppost.setEntity(reqEntity);
 
 			HttpResponse response = httpClient.execute(httppost);
+			Header[] location = response.getHeaders("Location");
+			String url = location[0].getValue();
+			
 			HttpEntity resEntity = response.getEntity();
 			System.out.println("res"+resEntity.toString());
+			
+			UrlLauncher launcher = RWT.getClient().getService(UrlLauncher.class);
+			launcher.openURL(url);
 			} catch (Exception exception) {
 				new ExceptionHandler(exception.getMessage());
 			}

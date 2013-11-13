@@ -18,6 +18,10 @@ import org.jdom2.input.SAXBuilder;
 public class RestrictionManagement {
 	private Map<String, Map<String, Map<String,String>>> restrictionMap = new HashMap<String, Map<String, Map<String,String>>>();
 
+	/**
+	 * This method finds in the choosen language integer and strings attributes. 
+	 * That means values are string elements and range are integer elements. 
+	 */
 	public void setRestrictionMap(String restrictionPath) {
 		restrictionMap.clear();
 		restrictionMap = new HashMap<String, Map<String, Map<String,String>>>();

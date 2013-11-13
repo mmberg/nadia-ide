@@ -56,7 +56,7 @@ public class ParserForChildren {
 		return children;
 	}
 
-	private boolean hasChildren(XSParticle xsParticle) { //TODO
+	private boolean hasChildren(XSParticle xsParticle) {
 		 if(xsParticle != null){
 			 XSTerm pterm = xsParticle.getTerm();
 			 

@@ -9,6 +9,7 @@ import java.util.Map;
 import net.msoetebier.nadia.ExceptionHandler;
 import net.msoetebier.nadia.Perspective;
 import net.msoetebier.nadia.Singleton;
+import net.msoetebier.nadia.function.Versionsmanagement;
 import net.msoetebier.nadia.parser.Parser;
 import net.msoetebier.nadia.parser.ParserForDetails;
 import net.msoetebier.nadia.readsave.AddItemView;
@@ -53,11 +54,11 @@ public class View extends ViewPart {
 	DetailView detailView = (DetailView) 
             Perspective.getView(PlatformUI.getWorkbench().getActiveWorkbenchWindow(),  DetailView.ID);
 	private Parser parser = new Parser();
+	private Versionsmanagement versionsmanagement = new Versionsmanagement();
 	private TreeItem oldCurrent;
 	private String attribute = "";
-	private boolean isUnique;
+	private boolean unique, itemFound;
 	private int count, countNumber;
-	private boolean itemFound;
 	
 	/**
 	 * This will allow us to create the viewer and initialize
@@ -96,7 +97,7 @@ public class View extends ViewPart {
 			Element rootNode = readXmlFileToSetTreeContent();
 			if (rootNode.getName().equals(item)) {
 				if (counter == 0) {
-					if (rootNode.getAttribute("name") != null) { //TODO
+					if (rootNode.getAttribute("name") != null) {
 						setAttribute(rootNode.getAttributeValue("name"));
 					}
 				}
@@ -116,7 +117,7 @@ public class View extends ViewPart {
 			if (node.getName() != null) {
 				if (node.getName().equals(item)) {
 					if (getCounter() == 0) {
-						if (node.getAttributeValue("name") != null) { //TODO
+						if (node.getAttributeValue("name") != null) {
 							if (getAttribute().equals("")) {
 								setAttribute(node.getAttributeValue("name"));							
 							}
@@ -219,12 +220,9 @@ public class View extends ViewPart {
 			
 			private void checked(TreeItem item, boolean firstLevel) throws Exception {
 		        if (item != null && detailView.getName(getOldCurrent()) != "" && isUnique(getOldCurrent(), detailView.getName(getOldCurrent()))) {
-//		        if (item != null && detailView.getName(item) != "" && isUnique(item, detailView.getName(item))) {
-//		        	detailView.removeBackgroundColorForName(); 
 		        	itemChecked(item, firstLevel);
 		        } else {
-//		        	detailView.setRedBackgroundColorForName(countElements(item), item.getText()); //TODO
-    				detailView.updateElements(countElements(getOldCurrent()), getOldCurrent().getText(), parser.getTypesForElement(changeItem(getOldCurrent().getText()), firstLevel, navigationView.getSchemaPath(), false), false, true);
+    				detailView.updateElements(countElements(getOldCurrent()), getOldCurrent().getText(), true, navigationView.getSchemaPath());
 	        	}
 			}
 			
@@ -234,14 +232,13 @@ public class View extends ViewPart {
 						if (!changeItem(getOldCurrent().getText()).equals("Main")) { 
 							detailView.saveDetails(getOldCurrent(), parser.getTypesForElement(changeItem(getOldCurrent().getText()), firstLevel, navigationView.getSchemaPath(), false), countElements(getOldCurrent()));
 						}
-						if (getAttributeForItem(countElements(getOldCurrent()), getOldCurrent(), changeItem(getOldCurrent().getText())) != "") { //TODO vorher countElements(item)
+						if (getAttributeForItem(countElements(getOldCurrent()), getOldCurrent(), changeItem(getOldCurrent().getText())) != "") {
 							getOldCurrent().setText(changeItem(getOldCurrent().getText()) + "=" + getAttributeForItem(countElements(getOldCurrent()), getOldCurrent(),changeItem(getOldCurrent().getText())));         					
 						} else {
 							getOldCurrent().setText(changeItem(getOldCurrent().getText()));
 						}      				
     				}
     				navigationView.setViewerInput(parser.getParentElements(navigationView.getSchemaPath()));
-    				//detailView.updateElements(countElements(item), item.getText(), parser.getTypesForElement(changeItem(item.getText()), firstLevel, navigationView.getSchemaPath(), false), false, false);
     				setOldCurrent(item);
     			} else {
     				if (!changeItem(getOldCurrent().getText()).equals("Main")) {
@@ -253,7 +250,7 @@ public class View extends ViewPart {
     					getOldCurrent().setText(changeItem(getOldCurrent().getText()));
     				}
     				navigationView.setViewerInput(parser.getTypesForElement(changeItem(item.getText()), firstLevel, navigationView.getSchemaPath(), true));
-    				detailView.updateElements(countElements(item), item.getText(), parser.getTypesForElement(changeItem(item.getText()), firstLevel, navigationView.getSchemaPath(), false), false, false);
+    				detailView.updateElements(countElements(item), item.getText(), false, navigationView.getSchemaPath());
     				setOldCurrent(item);
     			}
 			}
@@ -261,33 +258,47 @@ public class View extends ViewPart {
 			/**
 			 * This method organizes the right click with the mouse.
 			 */
-			private void treeMenuManager(MouseEvent event) {		        
-				Map<String, String> rightClickMap = navigationView.getLanguageManagement().get("rightClick");	
-				Menu popupMenu = new Menu(tree);
-		        MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
-		        deleteItem.setText(rightClickMap.get("delete"));
-		        tree.setMenu(popupMenu);
-		        final Point point = new Point(event.x, event.y);
-		        deleteItem.addSelectionListener(new SelectionListener() {
-					private static final long serialVersionUID = -5412544692884362472L;
-					@Override
-					public void widgetSelected(SelectionEvent selection) {
-				        TreeItem item = tree.getItem(point);
-				        if (!item.equals("Main")) {
-				        	RemoveItemView removeItem = new RemoveItemView();
-				        	removeItem.deleteItem(tree, item, navigationView.getXmlPath());
-				        }
-					}
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-
-					}
-				});
-			}
+			private void treeMenuManager(MouseEvent event) {
+				final Point point = new Point(event.x, event.y);
+				if (isRightClickIsAllowed(tree.getItem(point))) {
+					Map<String, String> rightClickMap = navigationView.getLanguageManagement().get("rightClick");	
+					Menu popupMenu = new Menu(tree);
+					MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
+					deleteItem.setText(rightClickMap.get("delete"));
+					tree.setMenu(popupMenu);
+					deleteItem.addSelectionListener(new SelectionListener() {
+						private static final long serialVersionUID = -5412544692884362472L;
+						@Override
+						public void widgetSelected(SelectionEvent selection) {
+							TreeItem item = tree.getItem(point);
+							if (!item.equals("Main")) {
+								RemoveItemView removeItem = new RemoveItemView();
+								removeItem.deleteItem(tree, item, navigationView.getXmlPath());
+							}
+						}
+						@Override
+						public void widgetDefaultSelected(SelectionEvent e) {
+						}
+					});
+				}}
 			@Override
 			public void mouseDoubleClick(MouseEvent event) {
 			}
 		});
+	}
+	
+	private boolean isRightClickIsAllowed(TreeItem item) {
+		boolean isRightClickIsAllowed = false;
+		try {
+			int minOccurs = versionsmanagement.getMinOccurs(changeItem(item.getText()), navigationView.getSchemaPath());
+			int existingElements = countDeleteElements(item);
+			if (minOccurs < existingElements) {
+				isRightClickIsAllowed = true;
+			}
+		}  catch (Exception exception) {
+			new ExceptionHandler(exception.getMessage());
+		}
+		return isRightClickIsAllowed;
 	}
 
 	/**
@@ -366,20 +377,16 @@ public class View extends ViewPart {
 					    }
 					      TreeItem newItem = new TreeItem(item, SWT.NONE);
 					      newItem.setText(text);
-//					      setOldCurrent(newItem);
 					  } else {
 					    TreeItem[] items = tree.getItems();
-//		            int index = 0;
 					    for (int i = 0; i < items.length; i++) {
 					      if (items[i] == item) {
-//		                index = i;
 					        break;
 					      }
 					    }
 					
 					      TreeItem newItem = new TreeItem(item, SWT.NONE);
 					      newItem.setText(text);
-//					      setOldCurrent(newItem);
 					  }
 
 					}
@@ -510,22 +517,21 @@ public class View extends ViewPart {
 		return firstLevel;
 	}
 	
+	private int countDeleteElements(TreeItem treeItem) {
+		int count = 0;
+		TreeItem parentItem = treeItem.getParentItem();
+		if (parentItem != null) {
+			TreeItem[] items = parentItem.getItems();
+			for (TreeItem item : items) {
+				if (changeItem(item.getText()).equals(changeItem(treeItem.getText()))) {
+						count = count + 1;
+				}
+			}
+		}
+		return count;
+	}
+	
 	public int countElements(TreeItem treeItem) {
-//		int count = 0;
-//		TreeItem parentItem = treeItem.getParentItem();
-//		if (parentItem != null) {
-//			TreeItem[] items = parentItem.getItems();
-//			for (TreeItem item : items) {
-//				if (changeItem(item.getText()).equals(changeItem(treeItem.getText()))) {
-//					if (!item.getText().equals(treeItem.getText())) {
-//						count = count + 1;
-//					} else {
-//						break;
-//					}
-//				}
-//			}
-//		}
-//		return count;
 		count = 0;
 		setItemFound(false);
 		Tree tree = treeItem.getParent();
@@ -574,7 +580,7 @@ public class View extends ViewPart {
 	}
 	
 	private boolean isUnique(TreeItem oldCurrent, String text) {
-		isUnique = true;
+		setIsUnique(true);
 		SAXBuilder builder = new SAXBuilder();
 		NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
 		File xmlFile = new File(navigationView.getXmlPath());	
@@ -583,28 +589,38 @@ public class View extends ViewPart {
 			Element rootNode = document.getRootElement();
 			if (rootNode.getAttributeValue("name") != null) {
 				if (rootNode.getAttributeValue("name").equals(text) && !rootNode.getName().equals(changeItem(oldCurrent.getText()))) {
-					isUnique = false;
+					setIsUnique(false);
 				} 				
 			}
 			isUniqueForChildren(oldCurrent, rootNode, text);
 		} catch (Exception exception) {
 			new ExceptionHandler(exception.getMessage());
 		}
-		return isUnique;
+		return getIsUnique();
 	}
 	
 	private void isUniqueForChildren(TreeItem oldCurrent, Element rootNode, String text) {
-		List<Element> list = rootNode.getChildren();
-		for (Element node : list) {
-			if (node.getAttributeValue("name") != null) {
-				if (node.getAttributeValue("name").equals(text) && !node.getName().equals(changeItem(oldCurrent.getText()))) {
-					isUnique = false;
-					break;
-				} else {
-					isUniqueForChildren(oldCurrent, node, text);
-				}				
-			}
+		if (getIsUnique()) {
+			List<Element> list = rootNode.getChildren();
+			for (Element node : list) {
+				if (node.getAttributeValue("name") != null) {
+					if (node.getAttributeValue("name").equals(text) && !node.getName().equals(changeItem(oldCurrent.getText()))) {
+						setIsUnique(false);
+						break;
+					} else {
+						isUniqueForChildren(oldCurrent, node, text);
+					}				
+				}
+			}			
 		}
+	}
+	
+	private void setIsUnique(boolean isUnique) {
+		unique = isUnique;
+	}
+	
+	private boolean getIsUnique() {
+		return unique;
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <language name="english">
 	<fileDialog>
-		<title>Choose a XML Schema (XSD) file, a XML file and optional a restriction file and URL path</title>
+		<title>Choose a XML Schema (XSD) file, a XML file and optional a restriction file</title>
 		<message>If you want to create a new XML file, you need to put the full path with the new XML file in it.</message>
 		<schemaPath>Schema file path:</schemaPath>
 		<xmlPath>XML file path:</xmlPath>
@@ -10,7 +10,7 @@
 		<errorMessage>Your input is incorrect. Please verify it.</errorMessage>
 	</fileDialog>
 	<versionsDialog>
-		<title>Version out of date</title>
+		<title>Version out of date or structure incompatible</title>
 		<message>Would you like to overwrite the xml file?
 		If not, please fill out the complete path of the new xml file.</message>
 		<path>New XML file path:</path>

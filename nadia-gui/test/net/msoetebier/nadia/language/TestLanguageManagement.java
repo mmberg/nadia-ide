@@ -31,14 +31,14 @@ public class TestLanguageManagement {
 	public void testEnglishVersionDialog() {
 		Map<String, Map<String, String>> englishMap = languageManagement.setMap("english");
 		Map<String, String> versionsDialogMap = englishMap.get("versionsDialog");
-		assertEquals("Version out of date", versionsDialogMap.get("title"));
+		assertEquals("Version out of date or structure incompatible", versionsDialogMap.get("title"));
 	}
 	
 	@Test 
 	public void testGermanVersionDialog() {
 		Map<String, Map<String, String>> germanMap = languageManagement.setMap("german");
 		Map<String, String> versionsDialogMap = germanMap.get("versionsDialog");
-		assertEquals("Version veraltet", versionsDialogMap.get("title"));
+		assertEquals("Version veraltet oder Struktur inkompatibel", versionsDialogMap.get("title"));
 	}
 	
 	@Test 

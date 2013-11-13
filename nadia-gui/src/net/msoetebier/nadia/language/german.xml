@@ -2,7 +2,7 @@
 <language name="german">
 	<fileDialog>
 		<title>Auswahl einer XML Schema (XSD)-Datei, einer XML-Datei und 
-		optional einer Datei für Beschränkungen von Nutzereingaben und eine URL-Adresse der Anwendung NADIA.</title>
+		optional einer Datei für Beschränkungen von Nutzereingaben.</title>
 		<message>Für die Erstellung einer neuen XML-Datei ist der vollständige Dateipfad erforderlich.</message>
 		<schemaPath>Dateipfad für das Schema:</schemaPath>
 		<xmlPath>Dateipfad für die XML-Datei:</xmlPath>
@@ -11,7 +11,7 @@
 		<errorMessage>Die Eingaben sind nicht korrekt. Bitte überprüfen Sie diese.</errorMessage>
 	</fileDialog>
 	<versionsDialog>
-		<title>Version veraltet</title>
+		<title>Version veraltet oder Struktur inkompatibel</title>
 		<message>Möchten Sie die veraltete XML-Datei überschreiben?
 		Falls nein, bitte geben Sie einen neuen vollständigen Dateipfad an.</message>
 		<path>Neuer Dateipfad:</path>
@@ -41,7 +41,7 @@
 		</message>
 	</saveFileAction>
 	<rightClick>
-		<new>Neu</new>
+		<new>Neu(es/er))</new>
 		<delete>Löschen</delete>
 	</rightClick>
 </language>

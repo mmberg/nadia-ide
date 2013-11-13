@@ -8,7 +8,6 @@ package net.msoetebier.nadia;
  * @see org.eclipse.jface.action.IAction#setActionDefinitionId(String)
  */
 public interface ICommandIds {
-
 	public static final String CMD_OPEN = "nadia-gui.open";
 	public static final String CMD_OPEN_MESSAGE = "nadia-gui.openMessage";
 }

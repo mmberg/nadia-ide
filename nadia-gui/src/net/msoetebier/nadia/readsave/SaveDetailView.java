@@ -48,68 +48,58 @@ public class SaveDetailView {
 		return getName;
 	}	
 	
+	private String attributeValue(String item) {
+		if (item.contains("=")) {
+			String[] changeItem = item.split("=");
+			return changeItem[1];	
+		} else {
+			return "";
+		}
+	}
+	
 	/**
 	 * Called from mouseDown() or drop() in View.
 	 * Needs to save this view, before the detail view gets updated.
 	 * Find the widgets (Label, Text, ..) and add it to the xml file.
 	 */
-	public void saveDetails(Composite top, TreeItem current, List<String> details, int counter) { //TODO changeItem
+	public void saveDetails(Composite top, TreeItem current, List<String> details, int counter) {
 		List<String> controlElements = new ArrayList<String>();
-//		int counter = countElements(current);
 		String currentElement = "";
+		String attribute = "";
 		for (Control control : top.getChildren()) {
 			if (control instanceof Label) {
 				Label label = (Label) control;
 				currentElement = returnFirstLetterUpperCase(label.getText());
 			} else if (currentElement.equals("name")) {
-					Text text = (Text) control;
-//					if (!text.getText().equals("")) { //TODO
-						saveAttributeToExistingFile(counter, changeItem(current.getText()), current, text.getText());  //TODO
-						currentElement = "";
-//					}
+				Text text = (Text) control;
+				saveAttributeToExistingFile(counter, changeItem(current.getText()), current, text.getText());
+				currentElement = "";
+				attribute = attributeValue(current.getText());
 			} else if (currentElement != "") {
 				if (control instanceof Text) {
 					int currentControl = setIsCurrentControl(currentElement, controlElements, counter);
 					Text text = (Text) control;
 					controlElements.add(currentElement);
-					saveValueToExistingFile(counter, current, currentElement, text.getText(), getIsCurrent(), currentControl);
+					saveValueToExistingFile(counter, current, currentElement, text.getText(), getIsCurrent(), currentControl, attribute);
 				} else if (control instanceof Combo) {
 					int currentControl = setIsCurrentControl(currentElement, controlElements, counter);
 					Combo combo = (Combo) control;
 					controlElements.add(currentElement);
-					saveValueToExistingFile(counter, current, currentElement, combo.getText(), getIsCurrent(), currentControl);
+					saveValueToExistingFile(counter, current, currentElement, combo.getText(), getIsCurrent(), currentControl, attribute);
 				} else if (control instanceof Spinner) {
 					int currentControl = setIsCurrentControl(currentElement, controlElements, counter);
 					Spinner spinner = (Spinner) control;
 					controlElements.add(currentElement);
-					saveValueToExistingFile(counter, current, currentElement, IntegerToString(spinner.getSelection()), getIsCurrent(), currentControl);
+					saveValueToExistingFile(counter, current, currentElement, IntegerToString(spinner.getSelection()), getIsCurrent(), currentControl, attribute);
 				} else if (control instanceof Button) {
 					int currentControl = setIsCurrentControl(currentElement, controlElements, counter);
 					Button enabledCheckbox = (Button) control;
 					controlElements.add(currentElement);
-					saveValueToExistingFile(counter, current, currentElement, BooleanToString(enabledCheckbox.getSelection()), getIsCurrent(), currentControl);
+					saveValueToExistingFile(counter, current, currentElement, BooleanToString(enabledCheckbox.getSelection()), getIsCurrent(), currentControl, attribute);
 				}
 			}
 		}
 	}
-	
-//	private int countElements(TreeItem treeItem) {
-////		int count = 0;
-////		TreeItem parentItem = treeItem.getParentItem();
-////		if (parentItem != null) {
-////			TreeItem[] items = parentItem.getItems();
-////			for (TreeItem item : items) {
-////				if (changeItem(item.getText()).equals(changeItem(treeItem.getText()))) {
-////					if (!item.getText().equals(treeItem.getText())) {
-////						count = count + 1;
-////					} else {
-////						break;
-////					}
-////				}
-////			}
-////		}
-////		return count;
-//	}
 	
 	private void getXmlCountForElement(String currentElement) {
 		SAXBuilder builder = new SAXBuilder();
@@ -260,15 +250,10 @@ public class SaveDetailView {
 		List<Element> list = rootNode.getChildren();
 		for (Element node : list) {
 			if (getNodeValue(node).equals(currentElement.getText())) {
-//				if (getAttributeCounter() == 0) {
 					Attribute attribute = new Attribute("name", attributeValue);
 					node.setAttribute(attribute);
 					setAttributeCounter(getAttributeCounter() - 1);
 					break;
-//				} else {
-//					setAttributeCounter(getAttributeCounter() - 1);
-//					findAndSaveElementForAttribute(node, current, currentElement, attributeValue);
-//				}
 			} else {
 				findAndSaveElementForAttribute(node, current, currentElement, attributeValue);
 			}
@@ -279,7 +264,7 @@ public class SaveDetailView {
 	 * Save value to xml file.
 	 * @param currentControl 
 	 */
-	private void saveValueToExistingFile(int counter, TreeItem currentElement, String label, String attributeValue, boolean isCurrentElementInFile, int currentControl) {
+	private void saveValueToExistingFile(int counter, TreeItem currentElement, String label, String attributeValue, boolean isCurrentElementInFile, int currentControl, String attribute) {
 		SAXBuilder builder = new SAXBuilder();
 		NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
 		File xmlFile = new File(navigationView.getXmlPath());	 
@@ -294,7 +279,7 @@ public class SaveDetailView {
 						if (element.getName().equals(label)) {
 							if (counter == 0 && currentControl == 0) {
 								if (attributeValue != null) {
-									element.setText(attributeValue); //changed
+									element.setText(attributeValue);
 								}	
 								counter = counter - 1;
 							} else {
@@ -306,14 +291,12 @@ public class SaveDetailView {
 				} else if (!isCurrentElementInFile && counter == 0){
 					Element newElement = new Element(label);
 					if (attributeValue != null) {
-//						Attribute attribute = new Attribute("name", attributeValue);
-//						newElement.setAttribute(attribute);
-						newElement.setText(attributeValue); //changed
+						newElement.setText(attributeValue);
 					}
 					rootNode.addContent(newElement);
 				}
 			} else {
-				findAndSaveElementForValues(rootNode, currentElement, label, attributeValue, isCurrentElementInFile, currentControl);
+				findAndSaveElementForValues(rootNode, currentElement, label, attributeValue, isCurrentElementInFile, currentControl, attribute);
 			}
 			XMLOutputter xmlOutput = new XMLOutputter();
 			xmlOutput.setFormat(Format.getPrettyFormat());
@@ -324,11 +307,11 @@ public class SaveDetailView {
 		}
 	}
 	
-	private void findAndSaveElementForValues(Element rootNode, TreeItem current, String label, String attributeValue, boolean isCurrentElementInFile, int currentControl) {
+	private void findAndSaveElementForValues(Element rootNode, TreeItem current, String label, String attributeValue, boolean isCurrentElementInFile, int currentControl, String attribute) {
 		List<Element> list = rootNode.getChildren();
 		for (Element node : list) {
 			if (node.getName().equals(changeItem(current.getText()))) {
-				if (node.getAttributeValue("name").equals(getAttributeChangeItem(current.getText()))) {
+				if (node.getAttributeValue("name").equals(attribute)) {
 					setIsCurrent(node, label);
 					if (getIsCurrent()) {
 						List<Element> children = node.getChildren();
@@ -340,9 +323,10 @@ public class SaveDetailView {
 											CDATA cdata = new CDATA(attributeValue);
 											element.setContent(cdata);
 										} else {
-											element.setText(attributeValue); //changed											
+											element.setText(attributeValue);										
 										}
-									}								
+									}
+									currentControl = currentControl - 1;
 								} else {
 									currentControl = currentControl - 1;						
 								}
@@ -351,20 +335,18 @@ public class SaveDetailView {
 					} else {
 						Element newElement = new Element(label);
 						if (!attributeValue.equals("")) {
-//						Attribute attribute = new Attribute("name", attributeValue);
-//						newElement.setAttribute(attribute);
 							if (label.equals("code")) {
 								CDATA cdata = new CDATA(attributeValue);
 								newElement.setContent(cdata);
 							} else {
-								newElement.setText(attributeValue); //changed								
+								newElement.setText(attributeValue);								
 							}
 						}
 						node.addContent(newElement);					
 					}		
 				}
 			} else {
-				findAndSaveElementForValues(node, current, label, attributeValue, isCurrentElementInFile, currentControl);
+				findAndSaveElementForValues(node, current, label, attributeValue, isCurrentElementInFile, currentControl, attribute);
 			}
 		}
 	}
@@ -385,15 +367,6 @@ public class SaveDetailView {
 		if (item.contains("=")) {
 			String[] changeItem = item.split("=");
 			return changeItem[0];			
-		} else {
-			return item;
-		}
-	}
-	
-	private String getAttributeChangeItem(String item) {
-		if (item.contains("=")) {
-			String[] changeItem = item.split("=");
-			return changeItem[1];
 		} else {
 			return item;
 		}

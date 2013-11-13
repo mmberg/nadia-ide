@@ -16,7 +16,7 @@ import org.jdom2.output.XMLOutputter;
 
 public class AddItemDetailView {
 
-	 public void addItemToXmlFile(String item) {
+	 public void addItemToXmlFile(String parentItem, String item) {
 		 	NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
 			File xmlFile = new File(navigationView.getXmlPath());	 
 			SAXBuilder builder = new SAXBuilder();
@@ -24,11 +24,11 @@ public class AddItemDetailView {
 			try {
 				document = (Document) builder.build(xmlFile);
 				Element rootNode = document.getRootElement();
-				if (rootNode.getName().equals(item)) {
+				if (rootNode.getName().equals(changeItem(parentItem))) {
 					Element newElement = new Element(item);
 					rootNode.addContent(newElement);
 				} else {
-					findAndAddItem(rootNode, item);
+					findAndAddItem(rootNode, parentItem, item);
 				}
 				XMLOutputter xmlOutput = new XMLOutputter();
 				xmlOutput.setFormat(Format.getPrettyFormat());
@@ -39,16 +39,32 @@ public class AddItemDetailView {
 			}
 	 }
 	 
-	 private void findAndAddItem(Element rootNode, String item) {
+	 private void findAndAddItem(Element rootNode, String parentItem, String item) {
 		 	List<Element> list = rootNode.getChildren();
 		 	for (Element node : list) {
-		 		if (node.getName().equals(item)) {
-		 			Element newElement = new Element(item);
-					rootNode.addContent(newElement);
-					break;
+		 		if (node.getName().equals(changeItem(parentItem))) {
+		 			if (node.getAttributeValue("name").equals(attributeValue(parentItem))) {
+		 				Element newElement = new Element(item);
+		 				node.addContent(newElement);
+		 				break;		 				
+		 			}
 		 		} else {
-		 			findAndAddItem(node, item);
+		 			findAndAddItem(node, parentItem, item);
 		 		}
 		 	}
 	 }
+	 
+	private String changeItem(String item) {
+			String[] changeItem = item.split("=");
+			return changeItem[0];
+	}
+		
+	private String attributeValue(String item) {
+		if (item.contains("=")) {
+			String[] changeItem = item.split("=");
+			return changeItem[1];	
+		} else {
+			return "";
+		}
+	}
 }

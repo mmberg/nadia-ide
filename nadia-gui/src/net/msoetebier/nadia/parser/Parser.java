@@ -277,10 +277,12 @@ public class Parser {
 	 * @param firstLevel 
 	 * @throws IOException @throws SAXException 
 	 */
-	public boolean elementIsAllowedInSchema(String item, int countItem, String schemaPath, boolean firstLevel) throws SAXException, IOException { //TODO
+	public boolean elementIsAllowedInSchema(String item, int countItem, String schemaPath, boolean firstLevel) throws SAXException, IOException {
 		boolean isAllowed = false;
 		int neededNumber = getNeededNumber(item, schemaPath, firstLevel);
-		if (countItem <= neededNumber) {
+		if (neededNumber == -1) {
+			isAllowed = true;
+		} else if (countItem <= neededNumber) {
 			isAllowed = true;
 		}
 		return isAllowed;

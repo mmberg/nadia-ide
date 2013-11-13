@@ -12,7 +12,7 @@ public class TestIsComplexType extends AbstractConverter {
 
 	@Test
 	public void testIsComplexTypeInOtherFile() throws Exception {
-		boolean isComplexType = parser.checkIfTypIsComplexForElement("computer", true, getOtherPath1());
+		boolean isComplexType = parser.checkIfTypIsComplexForElement("computer2", true, getOtherPath1());
 		boolean complexType = true;
 		assertEquals(complexType, isComplexType);
 	}

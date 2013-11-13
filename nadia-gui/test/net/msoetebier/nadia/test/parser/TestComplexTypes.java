@@ -17,9 +17,6 @@ public class TestComplexTypes extends AbstractConverter {
 	public void testGetComplexTypesForParentsInOtherFile() throws Exception {
 		List<String> getComplexTypesForComputer = parser.getTypesForElement("computer", true, getOtherPath1(), true);
 		List<String> complexTypesForComputer = new ArrayList<String>();
-		complexTypesForComputer.add("keyboard");
-		complexTypesForComputer.add("mouse");
-		complexTypesForComputer.add("monitor");
 		assertEquals(complexTypesForComputer, getComplexTypesForComputer);
 	}
 	

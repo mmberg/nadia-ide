@@ -106,6 +106,7 @@ public class FileDialog extends TitleAreaDialog {
 		nadiaUrlText = new Text(container, SWT.BORDER);
 		nadiaUrlText.setLayoutData(dataNadiaUrl);
 		nadiaUrlText.setText("https://localhost:8080/nadia/engine/dialog/load");
+		//nadiaUrlText.setText("http://mmt.et.hs-wismar.de:8080/nadia/engine/dialog/load");
 	}
 
 	@Override
