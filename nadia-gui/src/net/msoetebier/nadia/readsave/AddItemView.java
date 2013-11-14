@@ -2,6 +2,8 @@ package net.msoetebier.nadia.readsave;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
 
 import net.msoetebier.nadia.ExceptionHandler;
@@ -10,6 +12,7 @@ import net.msoetebier.nadia.view.NavigationView;
 
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
+import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -68,6 +71,8 @@ public class AddItemView {
 				
 			if (getNodeValue(rootNode).equals(parent.getText())) {
 				Element newElement = new Element(current);
+				Attribute attribute = new Attribute("name", getRandomString());
+				newElement.setAttribute(attribute);
 				rootNode.addContent(newElement);
 			} else {
 				findParentElement(rootNode, parent, current);
@@ -82,17 +87,24 @@ public class AddItemView {
 		}
 	}
 	
-	private void findParentElement(Element rootNode, TreeItem parent, String current) {
+	private void findParentElement(Element rootNode, TreeItem parent, String current) throws NoSuchAlgorithmException {
 		List<Element> list = rootNode.getChildren();
 		for (Element node : list) {
 			if (getNodeValue(node).equals(parent.getText())) {
 				Element newElement = new Element(current);
+				Attribute attribute = new Attribute("name", getRandomString());
+				newElement.setAttribute(attribute);
 				node.addContent(newElement);
 				break;
 			} else {
 				findParentElement(node, parent, current);
 			}
 		}
+	}
+	
+	private String getRandomString() throws NoSuchAlgorithmException {
+		 SecureRandom prng = SecureRandom.getInstance("SHA1PRNG");
+		 return new Integer(prng.nextInt()).toString();
 	}
 	
 	private String getNodeValue(Element node) {

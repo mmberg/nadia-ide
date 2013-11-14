@@ -9,7 +9,15 @@
 		<restrictionPath>Dateipfad für die Beschränkungsdatei:</restrictionPath>
 		<nadiaUrlPath>URL-Adresse der Anwendung NADIA:</nadiaUrlPath>
 		<errorMessage>Die Eingaben sind nicht korrekt. Bitte überprüfen Sie diese.</errorMessage>
+		<warningExist>Achtung! Die XML-Datei existiert und wird nun geöffnet!</warningExist>
+		<warningNew>Achtung! Die XML-Datei existiert nicht und wird nun angelegt!</warningNew>
 	</fileDialog>
+	<chooseFileDialog>
+		<title>Datei-Spezifizierung</title>
+		<message>Auswahl einer neuen oder bestehenden XML-Datei.</message>
+		<newFile>Neue Datei</newFile>
+		<existingFile>Bestehende Datei</existingFile>
+	</chooseFileDialog>
 	<versionsDialog>
 		<title>Version veraltet oder Struktur inkompatibel</title>
 		<message>Möchten Sie die veraltete XML-Datei überschreiben?

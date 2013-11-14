@@ -44,7 +44,9 @@ public class Parser {
 			XSElementDecl xsElementDecl = (XSElementDecl) itrElements.next();
 			XSComplexType xsComplexType = xsElementDecl.asElementDecl().getType().asComplexType();
 			if (xsComplexType != null) {
-				list.add(xsElementDecl.getName()); //add element(s)				
+				if (xsElementDecl.getName().equals("dialog")) { //attention: changed!
+					list.add(xsElementDecl.getName()); //add element(s)									
+				}
 			}
 		}
 		return list;

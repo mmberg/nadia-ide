@@ -2,13 +2,21 @@
 <language name="english">
 	<fileDialog>
 		<title>Choose a XML Schema (XSD) file, a XML file and optional a restriction file</title>
-		<message>If you want to create a new XML file, you need to put the full path with the new XML file in it.</message>
+		<message>If you want to create a new XML file, you need to specify the full path with the new XML file in it.</message>
 		<schemaPath>Schema file path:</schemaPath>
 		<xmlPath>XML file path:</xmlPath>
 		<restrictionPath>Restriction file path:</restrictionPath>
 		<nadiaUrlPath>URL path of NADIA:</nadiaUrlPath>
 		<errorMessage>Your input is incorrect. Please verify it.</errorMessage>
+		<warningExist>Attention! Your xml file exists and will be opened now!</warningExist>
+		<warningNew>Attention! Your xml file doesn't exists and will be created now!</warningNew>
 	</fileDialog>
+	<chooseFileDialog>
+		<title>File specification</title>
+		<message>Choose new or existing file.</message>
+		<newFile>New File</newFile>
+		<existingFile>Existing File</existingFile>
+	</chooseFileDialog>
 	<versionsDialog>
 		<title>Version out of date or structure incompatible</title>
 		<message>Would you like to overwrite the xml file?

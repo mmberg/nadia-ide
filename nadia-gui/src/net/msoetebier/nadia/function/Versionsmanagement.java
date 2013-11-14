@@ -3,7 +3,7 @@ package net.msoetebier.nadia.function;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,8 +15,9 @@ import net.msoetebier.nadia.parser.Parser;
 import net.msoetebier.nadia.parser.ParserForDetails;
 
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -42,14 +43,34 @@ public class Versionsmanagement {
 	public void versionsManagement(String schemaPath, String xmlPath, Map<String, String> versionsDialogMap) {
 		String schemaVersionsNumber = getSchemaVersionNumber(schemaPath);
 		String xmlVersionsNumber = getXmlVersionsNumber(xmlPath);
-		if (!schemaVersionsNumber.equals(xmlVersionsNumber) || isXmlFileIncompatibel(schemaPath, xmlPath)) {
-			VersionsDialog dialog = new VersionsDialog(new Shell(Display.getCurrent() == null ? Display.getDefault() : Display.getCurrent(), SWT.NO_TRIM), versionsDialogMap);
-			dialog.create();
-			if (dialog.open() == Window.OK) {
-				setXmlFileToNewSchemaStructure(schemaPath, xmlPath);				
-			}
+		if (!xmlVersionsNumber.equals("")) {
+			if (!schemaVersionsNumber.equals(xmlVersionsNumber) || isXmlFileIncompatibel(schemaPath, xmlPath)) {
+				VersionsDialog dialog = new VersionsDialog(getCenterShell(), versionsDialogMap);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					setXmlFileToNewSchemaStructure(schemaPath, xmlPath);				
+				}
+			}			
+		} else if (xmlVersionsNumber.equals("")) {
+			setXmlFileToNewSchemaStructure(schemaPath, xmlPath);				
 		}
 	}
+	
+	private Shell getCenterShell() {
+		Display display = Display.getCurrent() == null ? Display.getDefault() : Display.getCurrent();
+	    Shell shell = new Shell(display);
+	    shell.setSize(200, 200);
+	    
+	    Monitor primary = display.getPrimaryMonitor();
+	    Rectangle bounds = primary.getBounds();
+	    Rectangle rect = shell.getBounds();
+	    
+	    int x = bounds.x + (bounds.width - rect.width) / 2;
+	    int y = bounds.y + (bounds.height - rect.height) / 2;
+	    
+	    shell.setLocation(x, y);
+	    return shell;
+}
 	
 	/**
 	 * Return schema version number if it matches [0-9].[0-9]. 
@@ -315,9 +336,11 @@ public class Versionsmanagement {
 		}
 	}
 	
-	private String getRandomString() {
-		 SecureRandom random = new SecureRandom();
-		 return new BigInteger(130, random).toString(32);
+	private String getRandomString() throws NoSuchAlgorithmException {
+//		 SecureRandom random = new SecureRandom();
+//		 return new BigInteger(130, random).toString(10);	 
+		 SecureRandom prng = SecureRandom.getInstance("SHA1PRNG");
+		 return new Integer(prng.nextInt()).toString();
 	}
 	
 	private List<String> getChildrenList(String childString, boolean firstLevel, String schemaPath) throws SAXException, IOException {

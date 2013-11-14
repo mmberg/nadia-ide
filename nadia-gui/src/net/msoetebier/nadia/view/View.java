@@ -218,7 +218,7 @@ public class View extends ViewPart {
 				}   		
 			}
 			
-			private void checked(TreeItem item, boolean firstLevel) throws Exception {
+		    public void checked(TreeItem item, boolean firstLevel) throws Exception { //TODO
 		        if (item != null && detailView.getName(getOldCurrent()) != "" && isUnique(getOldCurrent(), detailView.getName(getOldCurrent()))) {
 		        	itemChecked(item, firstLevel);
 		        } else {
@@ -226,7 +226,7 @@ public class View extends ViewPart {
 	        	}
 			}
 			
-			private void itemChecked(TreeItem item, boolean firstLevel) throws Exception {
+			public void itemChecked(TreeItem item, boolean firstLevel) throws Exception { //TODO
 				if (changeItem(item.getText()).equals("Main")) {
     				if (getOldCurrent() != null) {
 						if (!changeItem(getOldCurrent().getText()).equals("Main")) { 
@@ -478,7 +478,7 @@ public class View extends ViewPart {
 	public boolean elementIsAllowedInSchema(String item, int countItem, String schemaPath, boolean firstLevel) throws SAXException, IOException {
 		boolean isAllowed = false;
 		int neededNumber = getMaxNumber(item, schemaPath, firstLevel);
-		if (countItem <= neededNumber) {
+		if (countItem < neededNumber) {
 			isAllowed = true;
 		}
 		return isAllowed;

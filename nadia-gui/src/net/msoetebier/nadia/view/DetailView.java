@@ -164,7 +164,7 @@ public class DetailView extends ViewPart {
 	 * Sets text for an item. Remove value and set it for this item.
 	 * If the complexType has a attribute value, setText().
 	 */
-	private Text setText(int counter, String item, boolean red) {
+	private Text setText(final int counter, final String item, final boolean red) {
 		new Label(top, SWT.NONE).setText("Name: ");
 		Text text = new Text(top, SWT.BORDER);
 		try {
