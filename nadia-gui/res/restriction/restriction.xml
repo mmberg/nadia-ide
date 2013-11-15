@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<attributes>
+	<attribute name="act">
+		<values>
+			<value displayname="information-seeking">seek</value>
+			<value displayname="information-providing">prov</value>
+			<value displayname ="action-requesting">req</value>
+		</values>
+	</attribute>
+	<attribute name="global_formality">
+		<range>
+			<min>1</min>
+			<max>100</max>
+		</range>
+	</attribute>
+	<attribute name="answerType">
+		<values>
+			<value displayname="fact.named_entity.non_animated.location.city">fact.named_entity.non_animated.location.city</value>
+			<value displayname="fact.quantity">fact.quantity</value>
+			<value displayname="fact.temporal.date">fact.temporal.date</value>
+			<value displayname="open_ended">open_ended</value>
+			<value displayname="decision">decision</value>
+		</values>
+	</attribute>
+</attributes>

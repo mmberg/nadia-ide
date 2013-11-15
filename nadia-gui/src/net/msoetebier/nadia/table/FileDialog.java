@@ -1,6 +1,10 @@
 package net.msoetebier.nadia.table;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -12,6 +16,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -21,7 +26,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class FileDialog extends TitleAreaDialog {
 	private static final long serialVersionUID = 3528799914452763480L;
-	private Text schemaText, xmlText, restrictionText, nadiaUrlText;
+	private Text xmlText, nadiaUrlText;
+	private Combo schemaCombo, restrictionCombo;
 	private String chooseSchema, chooseXml, chooseRestriction, chooseNadiaUrl, fileSpecification = "";
 	private boolean okPressed, notification = false;
 	private Map<String, String> fileDialogMap;
@@ -49,10 +55,11 @@ public class FileDialog extends TitleAreaDialog {
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		container.setLayout(layout);
 		
-		createSchema(container, fileDialogMap);
 		createXml(container, fileDialogMap);
-		createRestriction(container, fileDialogMap);
 		createNadiaUrl(container, fileDialogMap);
+
+		createSchema(container, fileDialogMap);
+		createRestriction(container, fileDialogMap);
 		setContainer(container);
 		return area;
 	}
@@ -60,22 +67,6 @@ public class FileDialog extends TitleAreaDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 	    createButton(parent, IDialogConstants.OK_ID,
 	            "OK", true);
-	}
-
-	private void createSchema(Composite container, Map<String, String> fileDialogMap) {
-		Label lbtSchema = new Label(container, SWT.NONE);
-		lbtSchema.setText(fileDialogMap.get("schemaPath"));
-
-		GridData dataSchema = new GridData();
-		dataSchema.grabExcessHorizontalSpace = true;
-		dataSchema.horizontalAlignment = GridData.FILL;
-
-		schemaText = new Text(container, SWT.BORDER);
-		schemaText.setLayoutData(dataSchema);
-//		schemaText.setText(System.getProperty("user.home"));
-
-//	  	schemaText.setText("D:/schema3.xsd");
-		schemaText.setText("D:/Anwendung/schemaDatei/schema1.xsd");
 	}
 	  
 	private void createXml(Composite container, Map<String, String> fileDialogMap) {
@@ -88,6 +79,7 @@ public class FileDialog extends TitleAreaDialog {
 		xmlText = new Text(container, SWT.BORDER);
 		xmlText.setLayoutData(dataXml);
 		xmlText.setText("D:/Anwendung/xmlDatei/xmlfile.xml");
+		xmlText.setText(System.getProperty("user.home"));
 		xmlText.addModifyListener(new ModifyListener() {
 			private static final long serialVersionUID = 7741733875467296986L;
 
@@ -96,23 +88,6 @@ public class FileDialog extends TitleAreaDialog {
 				modifyNotification(event);
 			}
 		});
-//		xmlText.setText(System.getProperty("user.home"));
-		
-//		xmlText.setText("C:/Users/Christina/Desktop/Master/Master-Thesis/Dateien/Aktuell/XML-Dateien/dummy4.xml");
-	}
-	
-	private void createRestriction(Composite container, Map<String, String> fileDialogMap) {
-		Label lbtRestriction = new Label(container, SWT.NONE);
-		lbtRestriction.setText(fileDialogMap.get("restrictionPath"));
-		
-		GridData dataRestriction = new GridData();
-		dataRestriction.grabExcessHorizontalSpace = true;
-		dataRestriction.horizontalAlignment = GridData.FILL;
-		restrictionText = new Text(container, SWT.BORDER);
-		restrictionText.setLayoutData(dataRestriction);
-//		restrictionText.setText(System.getProperty("user.home"));
-		
-		restrictionText.setText("D:/Anwendung/restrictionDatei/restriction.xml");
 	}
 	
 	private void createNadiaUrl(Composite container, Map<String, String> fileDialogMap) {
@@ -123,12 +98,59 @@ public class FileDialog extends TitleAreaDialog {
 		dataNadiaUrl.grabExcessHorizontalSpace = true;
 		dataNadiaUrl.horizontalAlignment = GridData.FILL;
 		nadiaUrlText = new Text(container, SWT.BORDER);
-		nadiaUrlText.setLayoutData(dataNadiaUrl);
-//		nadiaUrlText.setText(System.getProperty("user.home"));
-		
+		nadiaUrlText.setLayoutData(dataNadiaUrl);		
 		nadiaUrlText.setText("https://localhost:8080/nadia/engine/dialog/load");
-//		nadiaUrlText.setText("https://192.168.163.1:8080/nadia/engine/dialog/load");
 //		nadiaUrlText.setText("http://mmt.et.hs-wismar.de:8080/nadia/engine/dialog/load");
+	}
+	
+	private void createSchema(Composite container, Map<String, String> fileDialogMap) {
+		Label lbtSchema = new Label(container, SWT.NONE);
+		lbtSchema.setText(fileDialogMap.get("schemaPath"));
+
+		GridData dataSchema = new GridData();
+		dataSchema.grabExcessHorizontalSpace = true;
+		dataSchema.horizontalAlignment = GridData.FILL;
+
+		schemaCombo = new Combo(container, SWT.READ_ONLY | SWT.BORDER);
+		schemaCombo.setItems(getSchemaItems());
+		schemaCombo.select(0);
+		schemaCombo.setLayoutData(dataSchema);
+	}
+	
+	private String[] getSchemaItems() {
+		File file = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile() + "res/schema");
+		String[] directories = file.list(new FilenameFilter() {
+		  @Override
+		  public boolean accept(File dir, String name) {
+		    return new File(dir, name).isDirectory();
+		  }
+		});
+		System.out.println(Arrays.toString(directories));
+		return directories;
+	}
+	
+	private void createRestriction(Composite container, Map<String, String> fileDialogMap) {
+		Label lbtRestriction = new Label(container, SWT.NONE);
+		lbtRestriction.setText(fileDialogMap.get("restrictionPath"));
+		
+		GridData dataRestriction = new GridData();
+		dataRestriction.grabExcessHorizontalSpace = true;
+		dataRestriction.horizontalAlignment = GridData.FILL;
+		
+		restrictionCombo = new Combo(container, SWT.READ_ONLY | SWT.BORDER);
+		restrictionCombo.setItems(getRestrictionItems());
+		restrictionCombo.select(0);
+		restrictionCombo.setLayoutData(dataRestriction);
+	}
+	
+	private String[] getRestrictionItems() {
+		File file = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile() + "res/restriction");
+		List<File> directories = Arrays.asList(file.listFiles());
+		List<String> fileElements = new ArrayList<String>();
+		for (File fileDirectory : directories) {
+			fileElements.add(fileDirectory.getName());
+		}
+		return fileElements.toArray(new String[fileElements.size()]);
 	}
 	
 	private void createNotification(Composite container, String text) {
@@ -173,20 +195,37 @@ public class FileDialog extends TitleAreaDialog {
 	 * and the text fields are not accessible any more.
 	 */
 	private void saveInput() {
-		chooseSchema = schemaText.getText();
 		chooseXml = xmlText.getText();
-		chooseRestriction = restrictionText.getText();
 		chooseNadiaUrl = nadiaUrlText.getText();
+		chooseSchema = getSchemaInput();
+		chooseRestriction = getRestrictionInput();
+	}
+	
+	private String getSchemaInput() {
+		String text = schemaCombo.getText();
+		return this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile() + "res/schema/" + text + "/schema1.xsd";
+	}
+	
+	private String getRestrictionInput() {
+		String text = restrictionCombo.getText();
+		return this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile() + "res/restriction/" + text; 
 	}
 	
 	private boolean checkInputIsCorrect() {
 		boolean inputIsCorrect = false;
-		String schemaFile = schemaText.getText();
+		String schemaFile = getSchemaInput();
 		String xmlFile = xmlText.getText();		
 		if (!schemaFile.equals("") && !xmlFile.equals("")) {
+			File file = new File(schemaFile);
 			String schemaFormat = schemaFile.substring(schemaFile.length()-3, schemaFile.length());
 			String xmlFormat = xmlFile.substring(xmlFile.length()-3, xmlFile.length());
 			if (schemaFormat.equals("xsd") || schemaFormat.equals("XSD")) {
+				if (xmlFormat.equals("xml") || xmlFormat.equals("XML")) {
+					if (new File(schemaFile).exists()) {
+						inputIsCorrect = true;						
+					}
+				}
+			} else if (schemaFile.contains("java.io.FileInputStream") && file.exists()) {
 				if (xmlFormat.equals("xml") || xmlFormat.equals("XML")) {
 					if (new File(schemaFile).exists()) {
 						inputIsCorrect = true;						
@@ -198,7 +237,7 @@ public class FileDialog extends TitleAreaDialog {
 	}
 	
 	private void modifyNotification(ModifyEvent event) {
-		if (schemaText.getText() != null && xmlText.getText() != null) {
+		if (schemaCombo.getText() != null && xmlText.getText() != null) {
 			if (checkInputIsCorrect()) {
 				setNotificationText();	
 			}			
