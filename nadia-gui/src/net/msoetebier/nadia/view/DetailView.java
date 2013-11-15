@@ -544,7 +544,7 @@ public class DetailView extends ViewPart {
 			public void mouseUp(MouseEvent event) {
 			}
 			@Override
-			public void mouseDown(MouseEvent event) {
+			public void mouseDown(MouseEvent event) { //TODO
 				if (event.button == 3) {
 					detailViewMenuManager(counter, countElements, item, fullItem, firstLevel, event, label, red);
 				}
@@ -605,7 +605,7 @@ public class DetailView extends ViewPart {
 	    label.setMenu(popupMenu);
 	 }
 	 
-	 private int getCountItem(int countElements, String item) { //TODO changed countElement zu 1
+	 private int getCountItem(int countElements, String item) {
 		int countElement = 1;
 		for (Control control : top.getChildren()) {
 			if (control instanceof CLabel) {
@@ -715,7 +715,7 @@ public class DetailView extends ViewPart {
 		return firstLevel;
 	 }
 	 
-	 private int countLabels(String item) { //TODO
+	 private int countLabels(String item) {
 		int count = 0;
 		for (Control control : top.getChildren()) {
 			if (control instanceof CLabel) {

@@ -198,23 +198,25 @@ public class View extends ViewPart {
 				} else {
 					Point point = new Point(event.x, event.y);
 			        TreeItem item = tree.getItem(point);
-			        System.out.println("Mouse down: " + item.getText());
+			        if (item != null) {
+			        	System.out.println("Mouse down: " + item.getText());
 			        	boolean firstLevel = false;
-			        		try {
-			        			List<String> parentElements = parser.getParentElements(navigationView.getSchemaPath());
-			        			for (String element : parentElements) {
-			        				if (element.equals(changeItem(item.getText()))) {
-			        					firstLevel = true;
-			        				}
+			        	try {
+			        		List<String> parentElements = parser.getParentElements(navigationView.getSchemaPath());
+			        		for (String element : parentElements) {
+			        			if (element.equals(changeItem(item.getText()))) {
+			        				firstLevel = true;
 			        			}
-			        			if (getOldCurrent() != null && !getOldCurrent().getText().equals("Main")) {
-			        				checked(item, firstLevel);
-			        			} else {
-			        				itemChecked(item, firstLevel);
-			        			}
-							}  catch (Exception exception) {
-								new ExceptionHandler(exception.getMessage());
-							}
+			        		}
+			        		if (getOldCurrent() != null && !getOldCurrent().getText().equals("Main")) {
+			        			checked(item, firstLevel);
+			        		} else {
+			        			itemChecked(item, firstLevel);
+			        		}
+			        	}  catch (Exception exception) {
+			        		new ExceptionHandler(exception.getMessage());
+			        	}        	
+			        }
 				}   		
 			}
 			
