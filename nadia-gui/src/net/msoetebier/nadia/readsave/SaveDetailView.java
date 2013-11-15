@@ -9,6 +9,7 @@ import net.msoetebier.nadia.ExceptionHandler;
 import net.msoetebier.nadia.Singleton;
 import net.msoetebier.nadia.view.NavigationView;
 
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +44,8 @@ public class SaveDetailView {
 					if (text.getText() != null) {
 						getName = text.getText();						
 					}
+					currentElement = "";
+					break;
 			}
 		}
 		return getName;
@@ -69,6 +72,9 @@ public class SaveDetailView {
 		for (Control control : top.getChildren()) {
 			if (control instanceof Label) {
 				Label label = (Label) control;
+				currentElement = returnFirstLetterUpperCase(label.getText());
+			} else if (control instanceof CLabel) {
+				CLabel label = (CLabel) control;
 				currentElement = returnFirstLetterUpperCase(label.getText());
 			} else if (currentElement.equals("name")) {
 				Text text = (Text) control;

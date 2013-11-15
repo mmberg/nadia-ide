@@ -127,6 +127,7 @@ public class FileDialog extends TitleAreaDialog {
 //		nadiaUrlText.setText(System.getProperty("user.home"));
 		
 		nadiaUrlText.setText("https://localhost:8080/nadia/engine/dialog/load");
+//		nadiaUrlText.setText("https://192.168.163.1:8080/nadia/engine/dialog/load");
 //		nadiaUrlText.setText("http://mmt.et.hs-wismar.de:8080/nadia/engine/dialog/load");
 	}
 	

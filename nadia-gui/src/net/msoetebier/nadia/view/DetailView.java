@@ -2,6 +2,7 @@ package net.msoetebier.nadia.view;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +18,14 @@ import net.msoetebier.nadia.readsave.RemoveItemDetailView;
 import net.msoetebier.nadia.readsave.SaveDetailView;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -297,18 +300,18 @@ public class DetailView extends ViewPart {
 		if (elementDetail.size() != 0) {
 			if (restrictionManagement.isRestrictedItemWithValues(returnFirstLetterUpperCase(element))) {
 				if (restrictionManagement.isString(returnFirstLetterUpperCase(element))) {
-					newComboElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red);					
+					newComboElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red, listElements);					
 				} else if (restrictionManagement.isInteger(returnFirstLetterUpperCase(element))) {
 					int minimum = restrictionManagement.getMinimum(returnFirstLetterUpperCase(element));
 					int maximum = restrictionManagement.getMaximum(returnFirstLetterUpperCase(element));
-					newRestrictedIntegerElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), minimum, maximum, red);
+					newRestrictedIntegerElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), minimum, maximum, red, listElements);
 				}
 			} else if (elementDetail.get("type") == null || elementDetail.get("type").equals("string")) {
-				newStringElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red);
+				newStringElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red, listElements);
 			} else if (elementDetail.get("type").equals("int")) {
-				newIntegerElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red);
+				newIntegerElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red, listElements);
 			} else if (elementDetail.get("type").equals("boolean")) {
-				newBooleanElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red);
+				newBooleanElement(counter, getCountElements(), item, fullItem, firstLevel, element, getValue(), red, listElements);
 			}
 		}
 	}
@@ -440,10 +443,30 @@ public class DetailView extends ViewPart {
 		}
 		return cData;
 	}
-
-	private void newStringElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red) {
-		Label label = new Label(top, SWT.NONE);
+	
+	private CLabel checkSetImage(List<String> listElements, String text) {
+		CLabel label = new CLabel(top, SWT.NONE);
+		Display display = Display.getCurrent() == null ? Display.getDefault() : Display.getCurrent();
+		Image image;
+		if (setNewItemIsAllowed(listElements, returnFirstLetterUpperCase(text)) && !setIsItemIsRequired(listElements, returnFirstLetterUpperCase(text))) {
+			InputStream inputStream = getClass().getResourceAsStream("synced.gif");
+			image = new Image(display, inputStream);
+			label.setImage(image);			
+		} else if (setNewItemIsAllowed(listElements, returnFirstLetterUpperCase(text))) {
+			InputStream inputStream = getClass().getResourceAsStream("addobj.gif");
+			image = new Image(display, inputStream);
+			label.setImage(image);			
+		} else if (!setIsItemIsRequired(listElements, returnFirstLetterUpperCase(text))) {
+			InputStream inputStream = getClass().getResourceAsStream("deleteobj.gif");
+			image = new Image(display, inputStream);
+			label.setImage(image);			
+		}
 		label.setText(text);
+		return label;
+	}
+
+	private void newStringElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red, List<String> listElements) {
+		CLabel label = checkSetImage(listElements, text);	
 		addMouseListener(counter, countElements, item, fullItem, firstLevel, label, red);
 		  
 		Text textElement = new Text(top, SWT.SINGLE | SWT.BORDER);
@@ -456,9 +479,8 @@ public class DetailView extends ViewPart {
 		textElement.setLayoutData(data);
 	}
 	
-	private void newComboElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red) {
-		Label label = new Label(top, SWT.NONE);
-		label.setText(text);
+	private void newComboElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red, List<String> listElements) {
+		CLabel label = checkSetImage(listElements, text);	
 		addMouseListener(counter, countElements, item, fullItem, firstLevel, label, red);
 		Combo combo = new Combo(top, SWT.READ_ONLY | SWT.BORDER);
 		combo.setItems(restrictionManagement.getRestrictionValuesForItem(returnFirstLetterUpperCase(text)));
@@ -471,9 +493,8 @@ public class DetailView extends ViewPart {
 		combo.setLayoutData(data);
 	}
 	  
-	private void newIntegerElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red) {
-		Label label = new Label(top, SWT.NONE);
-		label.setText(text);
+	private void newIntegerElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red, List<String> listElements) {
+		CLabel label = checkSetImage(listElements, text);	
 		addMouseListener(counter, countElements, item, fullItem, firstLevel, label, red);
 		Spinner spinner = new Spinner(top, SWT.BORDER);
 		if (value != "") {
@@ -483,9 +504,8 @@ public class DetailView extends ViewPart {
 		}
 	}
 	
-	private void newRestrictedIntegerElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, int minimum, int maximum, boolean red) {
-		Label label = new Label(top, SWT.NONE);
-		label.setText(text);
+	private void newRestrictedIntegerElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, int minimum, int maximum, boolean red, List<String> listElements) {
+		CLabel label = checkSetImage(listElements, text);	
 		addMouseListener(counter, countElements, item, fullItem, firstLevel, label, red);
 		Spinner spinner = new Spinner(top, SWT.BORDER);
 		if (minimum != -1) {
@@ -501,9 +521,8 @@ public class DetailView extends ViewPart {
 		}
 	}
 	  
-	private void newBooleanElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red) {
-		Label label = new Label(top, SWT.NONE);
-		label.setText(text);
+	private void newBooleanElement(int counter, int countElements, String item, String fullItem, boolean firstLevel, String text, String value, boolean red, List<String> listElements) {
+		CLabel label = checkSetImage(listElements, text);	
 		addMouseListener(counter, countElements, item, fullItem, firstLevel, label, red);
 		final Button enabledCheckbox = new Button(top, SWT.CHECK);
 		if (getValue() != null && getValue().equals("false")) {
@@ -518,7 +537,7 @@ public class DetailView extends ViewPart {
 	 /**
 	  * If right click ('3') open detail view menu manager.
 	  */
-	 private void addMouseListener(final int counter, final int countElements, final String item, final String fullItem, final boolean firstLevel, final Label label, final boolean red) {
+	 private void addMouseListener(final int counter, final int countElements, final String item, final String fullItem, final boolean firstLevel, final CLabel label, final boolean red) {
 		label.addMouseListener(new MouseListener() {
 		private static final long serialVersionUID = 1214520849840906741L;
 			@Override
@@ -536,7 +555,7 @@ public class DetailView extends ViewPart {
 		});
 	 }
 	 
-	 private void detailViewMenuManager(final int counter, final int countElements, final String item, final String fullItem, final boolean firstLevel, MouseEvent event, final Label label, final boolean red) {		        
+	 private void detailViewMenuManager(final int counter, final int countElements, final String item, final String fullItem, final boolean firstLevel, MouseEvent event, final CLabel label, final boolean red) {		        
 		final NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
 		Map<String, String> rightClickMap = navigationView.getLanguageManagement().get("rightClick");
 		
@@ -586,13 +605,13 @@ public class DetailView extends ViewPart {
 	    label.setMenu(popupMenu);
 	 }
 	 
-	 private int getCountItem(int countElements, String item) {
-		int countElement = 0;
+	 private int getCountItem(int countElements, String item) { //TODO changed countElement zu 1
+		int countElement = 1;
 		for (Control control : top.getChildren()) {
-			if (control instanceof Label) {
+			if (control instanceof CLabel) {
 				if (countElements > 1) {
 					countElements = countElements - 1;
-					Label label = (Label) control;
+					CLabel label = (CLabel) control;
 					if (returnFirstLetterUpperCase(item).equals(returnFirstLetterUpperCase(label.getText()))) { //e.g. if item word equals all elements, add to counter  
 						countElement = countElement + 1;
 					}
@@ -620,8 +639,54 @@ public class DetailView extends ViewPart {
 		return isRequired;
 	 }
 	 
+	 private boolean setIsItemIsRequired(List<String> listElements, String item) {
+			boolean isRequired = false;
+			NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
+			try {
+				Map<Object, String> itemInformation = parserDetails.getMapForItem(item, ifItemIsFirstLevel(item), navigationView.getSchemaPath());
+				String minOccurs = itemInformation.get("minOccurs");
+				int count =  countForCLabel(listElements, item);
+				if (StringToInteger(minOccurs) == 0) {
+					isRequired = false;
+			 	} else if (StringToInteger(minOccurs) >= count) {
+					isRequired = true;
+				}
+			} catch (Exception exception) {
+				new ExceptionHandler(exception.getMessage());
+			}
+			return isRequired;
+		 }
+		
+	private boolean setNewItemIsAllowed(List <String> listElements, String item) {
+		boolean isAllowed = false;
+		NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
+		try {
+			Map<Object, String> itemInformation = parserDetails.getMapForItem(item, ifItemIsFirstLevel(item), navigationView.getSchemaPath());
+			String maxOccurs = itemInformation.get("maxOccurs");
+			int count = countForCLabel(listElements, item);
+			if (StringToInteger(maxOccurs) == -1) {
+				isAllowed = true;
+			} else if (count < StringToInteger(maxOccurs)) {
+				isAllowed = true;
+			}
+		} catch (Exception exception) {
+			new ExceptionHandler(exception.getMessage());
+		} 
+		return isAllowed;
+	}
+	
+	private int countForCLabel(List<String> listElements, String item) {
+		int counter = 0;
+		for (String element : listElements) {
+			if (element.equals(item)) {
+				counter = counter + 1;
+			}
+		}
+		return counter;
+	}
+	 
 	 private boolean newItemIsAllowed(String item) {
-		boolean isAllowed = true;
+		boolean isAllowed = false;
 		NavigationView navigationView = (NavigationView) Singleton.getInstance().get("NavigationView.ID");
 		try {
 			Map<Object, String> itemInformation = parserDetails.getMapForItem(item, ifItemIsFirstLevel(item), navigationView.getSchemaPath());
@@ -629,8 +694,8 @@ public class DetailView extends ViewPart {
 			int count = countLabels(firstLetterUpperCase(item));
 			if (StringToInteger(maxOccurs) == -1) {
 				isAllowed = true;
-			} else if (StringToInteger(maxOccurs) <= count) {
-				isAllowed = false;
+			} else if (count < StringToInteger(maxOccurs)) {
+				isAllowed = true;
 			}
 		} catch (Exception exception) {
 			new ExceptionHandler(exception.getMessage());
@@ -650,11 +715,11 @@ public class DetailView extends ViewPart {
 		return firstLevel;
 	 }
 	 
-	 private int countLabels(String item) {
+	 private int countLabels(String item) { //TODO
 		int count = 0;
 		for (Control control : top.getChildren()) {
-			if (control instanceof Label) {
-				Label label = (Label) control;
+			if (control instanceof CLabel) {
+				CLabel label = (CLabel) control;
 				if (label.getText().equals(item)) {
 					count = count + 1;
 				}

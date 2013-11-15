@@ -218,7 +218,7 @@ public class View extends ViewPart {
 				}   		
 			}
 			
-		    public void checked(TreeItem item, boolean firstLevel) throws Exception { //TODO
+		    private void checked(TreeItem item, boolean firstLevel) throws Exception {
 		        if (item != null && detailView.getName(getOldCurrent()) != "" && isUnique(getOldCurrent(), detailView.getName(getOldCurrent()))) {
 		        	itemChecked(item, firstLevel);
 		        } else {
@@ -226,7 +226,7 @@ public class View extends ViewPart {
 	        	}
 			}
 			
-			public void itemChecked(TreeItem item, boolean firstLevel) throws Exception { //TODO
+			private void itemChecked(TreeItem item, boolean firstLevel) throws Exception {
 				if (changeItem(item.getText()).equals("Main")) {
     				if (getOldCurrent() != null) {
 						if (!changeItem(getOldCurrent().getText()).equals("Main")) { 
